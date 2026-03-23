@@ -412,8 +412,15 @@ onMounted(async () => {
     if (s) s.title = title
   })
 
-  onSessionCreated(debouncedRefresh)
-  onSessionUpdated(debouncedRefresh)
+  onSessionCreated(() => updateSessions())
+  onSessionUpdated(({ session_id }) => {
+    const known = sessions.value.some(s => s.session_id === session_id)
+    if (!known) {
+      updateSessions()
+    } else {
+      debouncedRefresh()
+    }
+  })
 
   window.addEventListener('keydown', handleKeydown)
 })

@@ -163,6 +163,13 @@ class IMSessionManager:
             user_id=user_id,
         )
         if existing:
+            try:
+                await async_get_science_session(existing.science_session_id)
+            except Exception:
+                await self.session_repo.close_session(existing.id)
+                return await self.create_new_session(
+                    platform=platform, platform_chat_id=platform_chat_id, user_id=user_id,
+                )
             existing.updated_at = int(time.time())
             await self.session_repo.touch_session(existing.id, updated_at=existing.updated_at)
             await self._backfill_source(existing.science_session_id, platform)
