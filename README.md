@@ -84,7 +84,7 @@ No Docker required, no command-line needed. Download the desktop installer and g
 
 **1. Download the installer**
 
-👉 [ScienceClaw Desktop v0.0.3 (.tar.gz)](https://gitee.com/zidongtaichu_beijing/scienceclaw/releases/download/v0.0.3/ScienceClaw-Desktop-Setup-0.0.3.tar.gz)
+👉 [ScienceClaw Desktop v0.0.4 (.tar.gz)](https://gitee.com/zidongtaichu_beijing/scienceclaw/releases/download/v0.0.4/ScienceClaw-Desktop-Setup-0.0.4.tar.gz)
 
 **2. Extract and install**
 
