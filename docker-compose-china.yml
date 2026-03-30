@@ -140,6 +140,8 @@ services:
       MODEL_TOP_P: 0.95
       MODEL_TOP_K: 20
       MODEL_ENABLE_THINKING: "false"
+      WATCHFILES_FORCE_POLLING: "1"
+      FRONTEND_ENDPOINT: ${FRONTEND_ENDPOINT:-http://localhost:5173}
     ports:
       - "12001:8000"
     command: >

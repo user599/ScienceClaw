@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import time
 import secrets
-from typing import Any, Optional
+from typing import Any, Optional, Union
+from urllib.parse import urlencode
 from datetime import datetime
 
 from fastapi import APIRouter, Response, Request, HTTPException, Depends
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Field
 import bcrypt
 
@@ -119,9 +121,9 @@ async def check_default_password() -> ApiResponse:
     is_default = bcrypt.checkpw(default_pwd.encode("utf-8"), stored_hash)
     return ApiResponse(data={"is_default": is_default, "username": username, "password": default_pwd if is_default else None})
 
-@router.get("/sso-login", response_model=ApiResponse)
-async def sso_login(request: Request,response: Response) :
-#     获取请求头中的workCode
+@router.get("/sso-login", response_model=None)
+async def sso_login(request: Request, response: Response) -> Union[RedirectResponse, ApiResponse]:
+    # 获取请求头中的 workCode
     workCode = request.headers.get("workCode")
     if not workCode:
         return ApiResponse(code=401, msg="workCode is required")
@@ -158,16 +160,32 @@ async def sso_login(request: Request,response: Response) :
         {"$set": {"last_login_at": datetime.fromtimestamp(now).isoformat(), "updated_at": now}},
     )
 
-    # Set cookie
-    response.set_cookie(
-        key=settings.session_cookie,
-        value=access_token,
-        max_age=settings.session_max_age,
-        httponly=True,
-        secure=settings.https_only,
-        samesite="lax"
-    )
+    def _set_session_cookie(resp: Response) -> None:
+        resp.set_cookie(
+            key=settings.session_cookie,
+            value=access_token,
+            max_age=settings.session_max_age,
+            httponly=True,
+            secure=settings.https_only,
+            samesite="lax",
+        )
 
+    base = (getattr(settings, "frontend_endpoint", None) or "").strip().rstrip("/")
+    if base:
+        qs = urlencode(
+            {
+                "access_token": access_token,
+                "refresh_token": refresh_token,
+                "token_type": "Bearer",
+            }
+        )
+        sep = "&" if "?" in base else "?"
+        redirect_url = f"{base}{sep}{qs}"
+        out = RedirectResponse(url=redirect_url, status_code=302)
+        _set_session_cookie(out)
+        return out
+
+    _set_session_cookie(response)
     return ApiResponse(
         data=TokenResponse(
             user=_user_doc_to_auth_user(user_doc),

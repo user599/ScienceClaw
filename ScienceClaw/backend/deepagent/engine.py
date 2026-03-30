@@ -8,7 +8,6 @@ context window 解析优先级：
 """
 from __future__ import annotations
 
-import os
 import json
 from typing import Any, Dict, List, Optional
 
@@ -278,10 +277,6 @@ def _flatten_content(msg: BaseMessage) -> BaseMessage:
 
 
 _THINKING_MODEL_PATTERNS = ("minimax", "kimi", "moonshot")
-_TEMPERATURE = os.environ.get("MODEL_TEMPERATURE", 0.2)
-_TOP_P = os.environ.get("MODEL_TOP_P", 0.95)
-_TOP_K = os.environ.get("MODEL_TOP_K", 20)
-_DEFAULT_ENABLE_THINKING = os.environ.get("MODEL_ENABLE_THINKING", True)
 
 
 class _SafeChatOpenAI(ChatOpenAI):
@@ -403,14 +398,10 @@ def get_llm_model(
                    为 False 时不传 stream_options（某些 API 在非流式调用时不接受该参数）。
     """
     effective_max_tokens = max_tokens_override or settings.max_tokens
-    temperature = float(getattr(settings, "temperature", _TEMPERATURE) or _TEMPERATURE)
-    top_p = float(getattr(settings, "top_p", _TOP_P) or _TOP_P)
-    top_k = int(getattr(settings, "top_k", _TOP_K) or _TOP_K)
-    enable_thinking = bool(
-        getattr(settings, "enable_thinking", _DEFAULT_ENABLE_THINKING)
-        if hasattr(settings, "enable_thinking")
-        else _DEFAULT_ENABLE_THINKING
-    )
+    temperature = float(settings.model_temperature)
+    top_p = float(settings.model_top_p)
+    top_k = int(settings.model_top_k)
+    enable_thinking = bool(settings.model_enable_thinking)
 
     # stream_options 仅在流式调用时传递，非流式调用时 API 会拒绝该参数
     extra_kwargs: Dict[str, Any] = {}

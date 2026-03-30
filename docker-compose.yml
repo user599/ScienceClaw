@@ -97,6 +97,7 @@ services:
       TEMPERATURE: ${TEMPERATURE-0.7}
       MAX_TOKENS: ${MAX_TOKENS-2000}
       LOG_LEVEL: ${LOG_LEVEL-INFO}
+      WATCHFILES_FORCE_POLLING: "1"
       FILE_DOWNLOAD_ALLOWED_PREFIXES: /tmp,/app,/home/scienceclaw
       TZ: Asia/Shanghai
       AUTH_PROVIDER: local
@@ -123,6 +124,7 @@ services:
       LARK_ENABLED: "true"
       LARK_APP_ID: ${LARK_APP_ID-}
       LARK_APP_SECRET: ${LARK_APP_SECRET-}
+      FRONTEND_ENDPOINT: ${FRONTEND_ENDPOINT:-http://localhost:5173}
     ports:
       - "12001:8000"
     command: >

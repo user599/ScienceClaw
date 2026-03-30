@@ -54,6 +54,21 @@ class Settings(BaseSettings):
     lark_app_id: str = os.environ.get("LARK_APP_ID", "")
     lark_app_secret: str = os.environ.get("LARK_APP_SECRET", "")
 
+    #erp
+    erp_base_url: str = os.environ.get("ERP_BASE_URL", "http://erp:8080")
+    erp_app_id: str = os.environ.get("ERP_APP_ID", "")
+    erp_app_secret: str = os.environ.get("ERP_APP_SECRET", "")
+    erp_application_id: str = os.environ.get("ERP_APPLICATION_ID", "")
+
+    #model
+    model_temperature: float = float(os.environ.get("MODEL_TEMPERATURE", "0.2"))
+    model_top_p: float = float(os.environ.get("MODEL_TOP_P", "0.95"))
+    model_top_k: int = int(os.environ.get("MODEL_TOP_K", "20"))
+    model_enable_thinking: bool = os.environ.get("MODEL_ENABLE_THINKING", "false").lower() == "true"
+
+    # SSO 登录成功后浏览器重定向的前端根地址（如 http://localhost:5173）
+    frontend_endpoint: str = os.environ.get("FRONTEND_ENDPOINT", "")
+
     # class Config:
     #     env_prefix = 'APP_'
 
